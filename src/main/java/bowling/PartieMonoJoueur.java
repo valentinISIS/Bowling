@@ -1,16 +1,27 @@
 package bowling;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Cette classe a pour but d'enregistrer le nombre de quilles abattues lors des
  * lancers successifs d'<b>un seul et même</b> joueur, et de calculer le score
  * final de ce joueur
  */
 public class PartieMonoJoueur {
+	
+	public static final int NB_QUILLES = 10;
+	public static final int NB_TOURS = 10;
+	private int numTour = 1;
+	private List<Tour> partie = new ArrayList<>();
 
 	/**
 	 * Constructeur
 	 */
 	public PartieMonoJoueur() {
+		for (int i = 1; i <= NB_TOURS; i++) {
+			partie.add(new Tour(i));
+		}
 	}
 
 	/**
@@ -21,7 +32,10 @@ public class PartieMonoJoueur {
 	 * @return vrai si le joueur doit lancer à nouveau pour continuer son tour, faux sinon	
 	 */
 	public boolean enregistreLancer(int nombreDeQuillesAbattues) {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		partie.get(numTour-1).lancer(nombreDeQuillesAbattues);
+		if (!partie.get(numTour-1).estFini()) return true;
+		if (numTour < NB_TOURS) numTour++;
+		return false;
 	}
 
 	/**
@@ -31,14 +45,32 @@ public class PartieMonoJoueur {
 	 * @return Le score du joueur
 	 */
 	public int score() {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		int score = 0;
+		for (int i = 0; i < NB_TOURS-1; i++) {
+			Tour tour = partie.get(i);
+			score += tour.getNbQuilleTombeesLancer1() + tour.getNbQuilleTombeesLancer2();
+			if (tour.estSpare()) {
+				score+=partie.get(i+1).getNbQuilleTombeesLancer1();
+			}
+			else if (tour.estStrike()){
+				if (i+1 == NB_TOURS-1 || !partie.get(i+1).estStrike()){
+					score+=partie.get(i+1).getNbQuilleTombeesLancer1() + partie.get(i+1).getNbQuilleTombeesLancer2();
+				}
+				else {
+					score+=partie.get(i+1).getNbQuilleTombeesLancer1() + partie.get(i+2).getNbQuilleTombeesLancer1();
+					System.out.println(partie.get(i+1).getNbQuilleTombeesLancer1() + partie.get(i+2).getNbQuilleTombeesLancer1());
+				}
+			}
+		}
+		score += partie.get(NB_TOURS-1).getNbQuilleTombeesLancer1() + partie.get(NB_TOURS-1).getNbQuilleTombeesLancer2() + partie.get(NB_TOURS-1).getNbQuilleTombeesLancer3();
+		return score;
 	}
 
 	/**
 	 * @return vrai si la partie est terminée pour ce joueur, faux sinon
 	 */
 	public boolean estTerminee() {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		return partie.get(NB_TOURS-1).estFini();
 	}
 
 
@@ -46,7 +78,8 @@ public class PartieMonoJoueur {
 	 * @return Le numéro du tour courant [1..10], ou 0 si le jeu est fini
 	 */
 	public int numeroTourCourant() {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		if (estTerminee()) return 0;
+		return numTour;
 	}
 
 	/**
@@ -54,7 +87,9 @@ public class PartieMonoJoueur {
 	 *         est fini
 	 */
 	public int numeroProchainLancer() {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		if (estTerminee()) return 0;
+		else if (numTour == NB_TOURS) return partie.get(NB_TOURS-1).getNumCoup() + 1;
+		else return numeroTourCourant() % 2 + 1;
 	}
 
 }
