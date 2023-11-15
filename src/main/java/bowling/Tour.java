@@ -29,16 +29,18 @@ public class Tour {
 		switch (numCoup){
 			case 1:
 				nbQuilleTombeesLancer1 += valeur;
-				if (nbQuilleTombeesLancer1 == PartieMonoJoueur.NB_QUILLES) estFini = true;
-				else if (nbQuilleTombeesLancer1 == PartieMonoJoueur.NB_QUILLES && numTour == PartieMonoJoueur.NB_TOURS) numCoup += 2;
+				if (nbQuilleTombeesLancer1 == PartieMonoJoueur.NB_QUILLES && numTour != PartieMonoJoueur.NB_TOURS) estFini = true;
+				else if (nbQuilleTombeesLancer1 == PartieMonoJoueur.NB_QUILLES) numCoup += 1;
 				else numCoup++;
 				break;
 			case 2:
 				nbQuilleTombeesLancer2 += valeur;
 				estFini = true;
 				if (numTour == PartieMonoJoueur.NB_TOURS) {
-					numCoup++; 
-					if (nbQuilleTombeesLancer1+nbQuilleTombeesLancer2 < PartieMonoJoueur.NB_QUILLES) estFini = true;
+					if (!(nbQuilleTombeesLancer1+nbQuilleTombeesLancer2 < PartieMonoJoueur.NB_QUILLES)){
+						numCoup++;
+						estFini = false;
+					}
 				}
 				break;
 			case 3:

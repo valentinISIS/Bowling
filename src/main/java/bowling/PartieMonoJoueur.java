@@ -32,6 +32,7 @@ public class PartieMonoJoueur {
 	 * @return vrai si le joueur doit lancer à nouveau pour continuer son tour, faux sinon	
 	 */
 	public boolean enregistreLancer(int nombreDeQuillesAbattues) {
+		if (estTerminee()) throw new IllegalStateException("la partie est fini !");
 		partie.get(numTour-1).lancer(nombreDeQuillesAbattues);
 		if (!partie.get(numTour-1).estFini()) return true;
 		if (numTour < NB_TOURS) numTour++;
@@ -58,11 +59,13 @@ public class PartieMonoJoueur {
 				}
 				else {
 					score+=partie.get(i+1).getNbQuilleTombeesLancer1() + partie.get(i+2).getNbQuilleTombeesLancer1();
-					System.out.println(partie.get(i+1).getNbQuilleTombeesLancer1() + partie.get(i+2).getNbQuilleTombeesLancer1());
 				}
 			}
 		}
 		score += partie.get(NB_TOURS-1).getNbQuilleTombeesLancer1() + partie.get(NB_TOURS-1).getNbQuilleTombeesLancer2() + partie.get(NB_TOURS-1).getNbQuilleTombeesLancer3();
+		System.out.println(partie.get(NB_TOURS-1).getNbQuilleTombeesLancer1() + partie.get(NB_TOURS-1).getNbQuilleTombeesLancer2() + partie.get(NB_TOURS-1).getNbQuilleTombeesLancer3());
+		System.out.println("lancer 1 " + partie.get(NB_TOURS-1).getNbQuilleTombeesLancer1());
+		System.out.println("lancer 2 " + partie.get(NB_TOURS-1).getNbQuilleTombeesLancer2());
 		return score;
 	}
 
@@ -89,7 +92,7 @@ public class PartieMonoJoueur {
 	public int numeroProchainLancer() {
 		if (estTerminee()) return 0;
 		else if (numTour == NB_TOURS) return partie.get(NB_TOURS-1).getNumCoup() + 1;
-		else return numeroTourCourant() % 2 + 1;
+		else return partie.get(numTour).getNumCoup();
 	}
 
 }
